@@ -1,4 +1,9 @@
 # IDAO-21 Baseline
+
+#### Changes from basline :
+
+For competition 1 just the model and config files has been changed..
+
 ## FAQ
 - Why I can't install new packages?
 
