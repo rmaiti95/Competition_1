@@ -2,7 +2,7 @@
 
 #### Changes from basline :
 
-For MLHEP 2021: competition 1 just the model and config files has been changed (Team name : Transformers)
+For MLHEP 2021: competition 1 just the model, config file, results has been changed (Team name : Transformers)
 
 ## FAQ
 - Why I can't install new packages?
