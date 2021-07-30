@@ -29,23 +29,27 @@ class SimpleConv(pl.LightningModule):
                     nn.BatchNorm2d(16),
                     nn.ReLU(),
                     nn.MaxPool2d(kernel_size=19, stride=7),
+                    nn.Conv2d(16, 32, kernel_size=5, stride=1, padding=2),
+                    nn.BatchNorm2d(32),
+                    nn.ReLU(),
+                    nn.MaxPool2d(3,3),
                     nn.Flatten(),
                 )
-
         self.drop_out = nn.Dropout()
 
-        self.fc1 = nn.Linear(3600, 500)
-        self.fc2 = nn.Linear(500, 2)  # for classification
-        self.fc3 = nn.Linear(500, 1)  # for regression
+        self.fc1 = nn.Linear(800, 500)
+        #self.fc2 = nn.Linear(500, 100) 
+        self.fc3 = nn.Linear(500, 2) # for classification
+        self.fc4 = nn.Linear(500, 1) # for regression
 
 
         self.stem = nn.Sequential(
-            self.layer1, self.drop_out, self.fc1,
+            self.layer1, self.drop_out, self.fc1
             )
         if self.mode == "classification":
-            self.classification = nn.Sequential(self.stem, self.fc2)
+            self.classification = nn.Sequential(self.stem, self.fc3)
         else:
-            self.regression = nn.Sequential(self.stem, self.fc3)
+            self.regression = nn.Sequential(self.stem, self.fc4)
 
         self.train_acc = pl.metrics.Accuracy()
         self.valid_acc = pl.metrics.Accuracy()
@@ -67,10 +71,10 @@ class SimpleConv(pl.LightningModule):
 
         else:
             reg_pred = self.regression(x_target.float())
-            #             reg_loss = F.l1_loss(reg_pred, reg_target.float().view(-1, 1))
-            reg_loss = F.mse_loss(reg_pred, reg_target.float().view(-1, 1))
+            reg_loss = F.l1_loss(reg_pred, reg_target.float().view(-1, 1))
+            #reg_loss = F.mse_loss(reg_pred, reg_target.float().view(-1, 1))
 
-            #             reg_loss = torch.sum(torch.abs(reg_pred - reg_target.float().view(-1, 1)) / reg_target.float().view(-1, 1))
+            #reg_loss = torch.sum(torch.abs(reg_pred - reg_target.float().view(-1, 1)) / reg_target.float().view(-1, 1))
             self.log("regression_loss", reg_loss)
             return reg_loss
 
